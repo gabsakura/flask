@@ -8,11 +8,11 @@ def init_db():
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
     cursor.execute('''CREATE TABLE IF NOT EXISTS dados_sensores (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                sensor_id INTEGER,
-                temperatura REAL,
-                umidade REAL,
-                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        sensor_id INTEGER,
+        temperatura REAL,
+        umidade REAL,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
     )''')
     conn.commit()
     conn.close()
@@ -31,7 +31,7 @@ def inserir_dados():
     return jsonify({"message": "Dados inseridos com sucesso"}), 201
 
 @app.route('/dados-sensores', methods=['GET'])
-def obter_dados():
+def buscar_dados():
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM dados_sensores')
