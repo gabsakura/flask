@@ -1,29 +1,19 @@
 from flask import Flask, request, jsonify
 import sqlite3
-
 app = Flask(__name__)
-DATABASE = 'database.db'
-
-def init_db():
+DATABASE = 'sensores.db'
+def criar_tabela():
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
     cursor.execute('''CREATE TABLE IF NOT EXISTS dados_sensores (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        sensor_id INTEGER,
-        temperatura REAL,
-        umidade REAL,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        sensor_id TEXT NOT NULL,
+        temperatura REAL NOT NULL,
+        umidade REAL NOT NULL
     )''')
     conn.commit()
     conn.close()
-
-init_db()
-
-
-@app.route('/')
-def index():
-    conn = sqlite3.connect(DATABASE)
-    
+criar_tabela()
 @app.route('/dados-sensores', methods=['POST'])
 def inserir_dados():
     dados = request.get_json()
@@ -34,7 +24,6 @@ def inserir_dados():
     conn.commit()
     conn.close()
     return jsonify({"message": "Dados inseridos com sucesso"}), 201
-
 @app.route('/dados-sensores', methods=['GET'])
 def buscar_dados():
     conn = sqlite3.connect(DATABASE)
@@ -43,7 +32,6 @@ def buscar_dados():
     rows = cursor.fetchall()
     conn.close()
     return jsonify(rows)
-
 @app.route('/limpar-dados', methods=['DELETE'])
 def limpar_dados():
     conn = sqlite3.connect(DATABASE)
@@ -52,6 +40,5 @@ def limpar_dados():
     conn.commit()
     conn.close()
     return jsonify({"message": "Dados limpos com sucesso"}), 200
-
 if __name__ == '__main__':
     app.run(debug=True)
