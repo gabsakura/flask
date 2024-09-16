@@ -53,6 +53,25 @@ def limpar_dados():
     conn.close()
     return jsonify({"message": "Dados limpos com sucesso"}), 200
 
+# Endpoint para fornecer dados JSON para gráficos
+@app.route('/dados-sensores-json')
+def dados_sensores_json():
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    cursor.execute('SELECT timestamp, temperatura, umidade FROM dados_sensores')
+    rows = cursor.fetchall()
+    conn.close()
+    
+    timestamps = [row[0] for row in rows]
+    temperaturas = [row[1] for row in rows]
+    umidades = [row[2] for row in rows]
+    
+    return jsonify({
+        'timestamp': timestamps,
+        'temperatura': temperaturas,
+        'umidade': umidades
+    })
+
 # Rota para a página principal
 @app.route('/')
 def index():
@@ -62,6 +81,11 @@ def index():
     dados = cursor.fetchall()
     conn.close()
     return render_template('index.html', dados=dados)
+
+# Rota para a exibição de gráficos
+@app.route('/graficos')
+def graficos():
+    return render_template('graficos.html') 
 
 # Inicia o servidor Flask
 if __name__ == '__main__':
